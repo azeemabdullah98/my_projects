@@ -1,1 +1,1 @@
-# my_projects
+# my sample projects
