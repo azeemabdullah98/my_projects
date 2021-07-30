@@ -14,6 +14,7 @@ from datetime import datetime
 def ProductScrape(links): 
     comp_name='TenderCuts'
     outputFile=open('output.csv','w+',newline='')
+    url_file=open('links.txt','w+')
     outputDictWriter=csv.DictWriter(outputFile,['Name','Weight','Gross Weight','Net Weight','Unit Of Measurement','Price'])
     outputDictWriter.writeheader()
     for url in links:
@@ -47,7 +48,6 @@ def ProductScrape(links):
             now=datetime.now()
             current=now.strftime("%d/%m/%Y %H:%M:%S")
             url="\n"+url+"\n"
-            url_file=open('links.txt','w+')
             url_file.writelines(url)
             url_file.writelines(["-> ",current])
     outputFile.close()
