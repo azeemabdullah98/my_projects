@@ -9,7 +9,7 @@ import scipy.sparse as sp
 import random
 
 # For automatic dataset downloading
-from urllib2 import urlopen
+from urllib3 import urlopen
 from zipfile import ZipFile
 from StringIO import StringIO
 import shutil
