@@ -11,6 +11,9 @@
 *.nt
 *#
 *~
+*.csv
+*.txt
+*.json
 
 # Don't save data to repo
 gcmc/data/ml_100k/*
