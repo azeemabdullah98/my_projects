@@ -233,19 +233,23 @@ def MaintenanceIncrementCost(choice,maintenance_charge,maintenance_rate):
     return maintenance_cost
 
 # function to calculate the yearly depreciation of solar power generation, returns list of depreciated values...
-def SolarDepreciationCost(power_gen,cuf_factor,grid_tariff):
+def SolarDepreciationCost(power_gen,cuf_factor,grid_tariff,tariff_escalation):
     solarDepreciation = []
     yearlyIncome = []
+    gridTariffList = []
     cuf = 1-(cuf_factor/100)
+    
     count = 1
     for i in range(26):
         if count <= 2:
             solarDepreciation.append(power_gen)
-            yearlyIncome.append(solarDepreciation[0]*grid_tariff)
+            gridTariffList.append(grid_tariff)
+            yearlyIncome.append(solarDepreciation[0]*gridTariffList[0])
             count += 1
         else:
             solarDepreciation.append(round(solarDepreciation[-1]*cuf,2))
-            yearlyIncome.append(round(solarDepreciation[-1]*grid_tariff,2))
+            gridTariffList.append(round(gridTariffList[-1]*(1+(tariff_escalation/100)),2))
+            yearlyIncome.append(round(solarDepreciation[-1]*gridTariffList[-1],2))
     return solarDepreciation,yearlyIncome
 
 # for commercial...
@@ -479,10 +483,12 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
         Economy_power_gen = float(Economy_unit)*Irradiance 
         Secure_power_gen = float(secure_unit)*Irradiance
         cuf_factor = float(df[(df['Line Text'] == 'CUFdegradationFactor')]['Cond Value'].values[0]) # for both Residential and commercial...
+        
+        
         if choice == 'residential': 
-            
-            EconomyPowerGen, EconomyYearlyIncome = SolarDepreciationCost(Economy_power_gen,cuf_factor,grid_tariff)
-            SecurePowerGen, SecureYearlyIncome = SolarDepreciationCost(Secure_power_gen,cuf_factor,grid_tariff)
+            tariff_escalation = float(df[(df['Line Text'] == 'TariffEscalation')]['Cond Value'].values[0])
+            EconomyPowerGen, EconomyYearlyIncome = SolarDepreciationCost(Economy_power_gen,cuf_factor,grid_tariff,tariff_escalation)
+            SecurePowerGen, SecureYearlyIncome = SolarDepreciationCost(Secure_power_gen,cuf_factor,grid_tariff,tariff_escalation)
             maintenance_charge = float(df[(df['Line Text'] == 'defaultMaintenanceCharge(Res)')]['Cond Value'].values[0])
             maintenance_rate = float(df[(df['Line Text'] == 'MaintenanceRate(Res)')]['Cond Value'].values[0])
             Economy_maintenance_charge = maintenance_charge*Economy_unit
