@@ -5,7 +5,7 @@ import json
 import boto3
 from io import StringIO
 
-client = boto3.client('s3',region_name = 'us-east-2')
+client = boto3.client('s3',region_name = "us-east-2")
 
 bucket_name = 'solar-calc-demo'
 
@@ -19,7 +19,9 @@ csv_string1 = body1.read().decode('utf-8')
 csv_string2 = body2.read().decode('utf-8')
 
 df = pd.read_csv(StringIO(csv_string1))
+# df = pd.read_csv("c:/python_projects/solar_calculator/final_data.csv")
 df1 = pd.read_csv(StringIO(csv_string2))
+# df1 = pd.read_csv("c:/python_projects/solar_calculator/SKU - Sheet1.csv")
 
 def ConditionalFunc(CondValue,new_df):
     try:
@@ -406,7 +408,7 @@ def CumSavings(pv_savings):
     count = 0
     for i in pv_savings:
         if count == 0:
-            cum_savings.append(-i)
+            cum_savings.append(i)
             count += 1
         else:
             cum_savings.append(cum_savings[-1]+i)
@@ -429,7 +431,7 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
     if state in state_list and discom in discom_list:
         
         print("for {} type ".format(choice))
-        new_df = df[(df['Cond Type'] == choice) & (df['Main Cond ID'] == state) & (df['Sub Cond ID'] == discom)]      
+        new_df = df[(df['Cond Type'] == choice) & (df['Main Cond ID'] == state) & (df['Sub Cond ID'] == discom)]     
         fc_charge = new_df[(new_df['Line Text'] == 'defaultFixedCharge')]
         fc_charge = float(fc_charge.at[fc_charge.index[0],'Cond Value'])
         irradiance = new_df[(new_df['Line Text'] == 'Irradiance')]
@@ -458,6 +460,7 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
         smart_internal_SKU,smart_AC_cap,smart_unit,smart_cost = SmartRecommendation(df1,rooftopArea,struct_height,energy_requirement)
         pro_internal_SKU,pro_AC_cap,pro_unit,pro_cost = ProRecommendation(df1,rooftopArea,struct_height,energy_requirement)
         secure_internal_SKU,secure_AC_cap,secure_unit,secure_cost = PremiumRecommendation(df1,rooftopArea,struct_height,energy_requirement,battery_capacity)
+        num_trees_saved_per_kWp = 40
         if abs(rooftopArea-(smart_unit*100)) < abs(rooftopArea-(pro_unit*80)):
             
             Economy_unit = smart_unit
@@ -501,9 +504,9 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                 net_economy_cash_flow,cum_economy_cash_flow = CashFlow(EconomyYearlyIncome,economyEMI,EconomyMaintenanceCost,EconomyDownpayment,N)
                 net_secure_cash_flow,cum_secure_cash_flow = CashFlow(SecureYearlyIncome,secureEMI,SecureMaintenanceCost,SecureDownpayment,N)
                 
-                EconPaybackPeriod = [i for i in cum_economy_cash_flow if i<0 or i == 0]
+                EconPaybackPeriod = [i for i in cum_economy_cash_flow if i<=0]
                 print(EconPaybackPeriod)
-                SecPaybackPeriod = [i for i in cum_secure_cash_flow if i<0 or i == 0]
+                SecPaybackPeriod = [i for i in cum_secure_cash_flow if i<=0]
                 print(SecPaybackPeriod)
                 if battery_backup != 'no':
                     print("for Secure option...")
@@ -516,8 +519,10 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "TermLoanTenure":str(N),
                                   "TermLoanInterestRate":str(R),
                                     "DebtServicing/EMI":secureEMI/12,
-                                     "Savings_10":cum_secure_cash_flow[10],
-                                     "Savings_25":cum_secure_cash_flow[25]}
+                                     "Savings_10":cum_secure_cash_flow[11],
+                                     "Savings_25":cum_secure_cash_flow[25],
+                                     "PayBackPeriod":len(SecPaybackPeriod)-1,
+                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
                     print(dataframe1)
                     return dataframe1
                 else:
@@ -531,8 +536,10 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "TermLoanTenure":str(N),
                                   "TermLoanInterestRate":str(R),
                                     "DebtServicing/EMI(Monthly)":economyEMI/12,
-                                     "Savings_10":cum_economy_cash_flow[10],
-                                     "Savings_25":cum_economy_cash_flow[25]}
+                                     "Savings_10":cum_economy_cash_flow[11],
+                                     "Savings_25":cum_economy_cash_flow[25],
+                                     "PayBackPeriod":len(EconPaybackPeriod)-1,
+                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
                     print(dataframe2)
                     return dataframe2
                 
@@ -544,6 +551,12 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                 SecureDownpayment = secure_cost
                 net_economy_cash_flow,cum_economy_cash_flow = CashFlow(EconomyYearlyIncome,economyEMI,EconomyMaintenanceCost,EconomyDownpayment,N)
                 net_secure_cash_flow,cum_secure_cash_flow = CashFlow(SecureYearlyIncome,secureEMI,SecureMaintenanceCost,SecureDownpayment,N)
+                
+                EconPaybackPeriod = [i for i in cum_economy_cash_flow if i<=0]
+                print(EconPaybackPeriod)
+                SecPaybackPeriod = [i for i in cum_secure_cash_flow if i<=0]
+                print(SecPaybackPeriod)
+                
                 if battery_backup != 'no':
                     print('for Secure option...')
                     dataframe1 = {"RecommendedDCUnit":str(secure_unit),
@@ -551,8 +564,10 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU":secure_internal_SKU ,
                                    "CapitalCost":str(secure_cost),
-                                    "Savings_10":cum_secure_cash_flow[10],
-                                     "Savings_25":cum_secure_cash_flow[25]}
+                                    "Savings_10":cum_secure_cash_flow[11],
+                                     "Savings_25":cum_secure_cash_flow[25],
+                                     "PayBackPeriod":len(SecPaybackPeriod)-1,
+                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
                     print(dataframe1)
                     return dataframe1
                 else:
@@ -562,8 +577,10 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU": Economy_SKU,
                                    "CapitalCost":str(Economy_cost),
-                                    "Savings_10":cum_economy_cash_flow[10],
-                                     "Savings_25":cum_economy_cash_flow[25]}
+                                    "Savings_10":cum_economy_cash_flow[11],
+                                     "Savings_25":cum_economy_cash_flow[25],
+                                     "PayBackPeriod":len(EconPaybackPeriod)-1,
+                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
                     print(dataframe2)
                     return dataframe2
                 
@@ -619,7 +636,11 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                 Econ_cum_savings=CumSavings(Econ_pv_savings)
                 Sec_cum_savings=CumSavings(Sec_pv_savings)
                 
-        
+                EconPaybackPeriod = [i for i in Econ_cum_savings if i<=0]
+                print(EconPaybackPeriod)
+                SecPaybackPeriod = [i for i in Sec_cum_savings if i<=0]
+                print(SecPaybackPeriod)
+                
                 if battery_backup != 'no':
                     print("for Secure option...")
                     dataframe1= {"RecommendedDCUnit":str(secure_unit),
@@ -632,7 +653,9 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                 "TermLoanInterestRate":str(ROI),
                                 "DebtServicing/EMI(Monthly)":secureEMI/12,
                                 "Savings_10":Sec_cum_savings[10],
-                                "Savings_25":Sec_cum_savings[25]}
+                                "Savings_25":Sec_cum_savings[25],
+                                "PayBackPeriod":len(SecPaybackPeriod),
+                                "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
                     print(dataframe1)
                     return dataframe1
                 else:
@@ -647,7 +670,9 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                     "TermLoanInterestRate":str(ROI),
                                     "DebtServicing/EMI(Monthly)":economyEMI/12,
                                      "Savings_10":Econ_cum_savings[10],
-                                    "Savings_25":Econ_cum_savings[25]}
+                                    "Savings_25":Econ_cum_savings[25],
+                                     "PayBackPeriod":len(EconPaybackPeriod),
+                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
                     print(dataframe2)
                     return dataframe2
             elif loan == 'no':
@@ -670,6 +695,11 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                 Econ_cum_savings=CumSavings(Econ_pv_savings)
                 Sec_cum_savings=CumSavings(Sec_pv_savings)
                 
+                EconPaybackPeriod = [i for i in Econ_cum_savings if i<=0]
+                print(EconPaybackPeriod)
+                SecPaybackPeriod = [i for i in Sec_cum_savings if i<=0]
+                print(SecPaybackPeriod)
+                
                 if battery_backup != 'no':
                     print("for Secure option...")
                     dataframe1 =  {"RecommendedDCUnit":str(secure_unit),
@@ -678,7 +708,9 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "RecommendedSKU":secure_internal_SKU ,
                                    "CapitalCost":str(secure_cost),
                                    "Savings_10":Sec_cum_savings[10],
-                                   "Savings_25":Sec_cum_savings[25]}
+                                   "Savings_25":Sec_cum_savings[25],
+                                    "PayBackPeriod":len(SecPaybackPeriod),
+                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
                     print(dataframe1)
                     return dataframe1
                 else:
@@ -689,7 +721,9 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "RecommendedSKU": Economy_SKU,
                                    "CapitalCost":str(Economy_cost),
                                    "Savings_10":Econ_cum_savings[10],
-                                   "Savings_25":Econ_cum_savings[25]}
+                                   "Savings_25":Econ_cum_savings[25],
+                                    "PayBackPeriod":len(EconPaybackPeriod),
+                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
                     print(dataframe2)
                     return dataframe2
     else:
