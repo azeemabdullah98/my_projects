@@ -525,7 +525,7 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "TermLoanTenure":str(N),
                                   "TermLoanInterestRate":str(R),
                                     "DebtServicing/EMI":secureEMI/12,
-                                     "Savings_10":cum_secure_cash_flow[11],
+                                     "Savings_10":cum_secure_cash_flow[10],
                                      "Savings_25":cum_secure_cash_flow[25],
                                      "PayBackPeriod":len(SecPaybackPeriod)-1,
                                      "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
@@ -542,7 +542,7 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "TermLoanTenure":str(N),
                                   "TermLoanInterestRate":str(R),
                                     "DebtServicing/EMI(Monthly)":economyEMI/12,
-                                     "Savings_10":cum_economy_cash_flow[11],
+                                     "Savings_10":cum_economy_cash_flow[10],
                                      "Savings_25":cum_economy_cash_flow[25],
                                      "PayBackPeriod":len(EconPaybackPeriod)-1,
                                      "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
@@ -570,7 +570,7 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU":secure_internal_SKU ,
                                    "CapitalCost":str(secure_cost),
-                                    "Savings_10":cum_secure_cash_flow[11],
+                                    "Savings_10":cum_secure_cash_flow[10],
                                      "Savings_25":cum_secure_cash_flow[25],
                                      "PayBackPeriod":len(SecPaybackPeriod)-1,
                                      "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
@@ -583,7 +583,7 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU": Economy_SKU,
                                    "CapitalCost":str(Economy_cost),
-                                    "Savings_10":cum_economy_cash_flow[11],
+                                    "Savings_10":cum_economy_cash_flow[10],
                                      "Savings_25":cum_economy_cash_flow[25],
                                      "PayBackPeriod":len(EconPaybackPeriod)-1,
                                      "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
