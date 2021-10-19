@@ -109,6 +109,13 @@ def SmartRecommendation(df1,rooftopArea,struct_height,energyReq):
                 elif energyReq == dc_capacity[i] or ((rooftopArea/100) == dc_capacity[i]):
                     final_units = dc_capacity[i]
                     smart_unit.append(final_units) 
+            elif rooftopArea/100 <= dc_capacity[-1] and energyReq > dc_capacity[-1]:
+                if (rooftopArea/100 > dc_capacity[i] and rooftopArea/100 < dc_capacity[i+1]):
+                    final_units = dc_capacity[i]
+                    smart_unit.append(final_units)
+                elif rooftopArea/100 == dc_capacity[i]:
+                    final_units = dc_capacity[i]
+                    smart_unit.append(final_units)
         else:
             final_units = dc_capacity[-1]
             smart_unit.append(final_units)
@@ -143,6 +150,13 @@ def ProRecommendation(df1,rooftopArea,struct_height,energyReq):
                     final_units = dc_capacity1[i]
                     pro_unit.append(final_units)
                 elif energyReq == dc_capacity1[i] or ((rooftopArea/80) == dc_capacity1[i]):
+                    final_units = dc_capacity1[i]
+                    pro_unit.append(final_units)
+            elif rooftopArea/80 <= dc_capacity1[-1] and energyReq > dc_capacity1[-1]:
+                if (rooftopArea/80 > dc_capacity1[i] and rooftopArea/80 < dc_capacity1[i+1]):
+                    final_units = dc_capacity1[i]
+                    pro_unit.append(final_units)
+                elif rooftopArea/80 == dc_capacity1[i]:
                     final_units = dc_capacity1[i]
                     pro_unit.append(final_units)
         else:
@@ -181,6 +195,13 @@ def PremiumRecommendation(df1,rooftopArea,struct_height,energyReq,battery_capaci
                     final_units = dc_capacity[i]
                     secure_unit.append(final_units)
                 elif energyReq == dc_capacity[i] or ((rooftopArea/100) == dc_capacity[i]):
+                    final_units = dc_capacity[i]
+                    secure_unit.append(final_units)
+            elif rooftopArea/100 <= dc_capacity[-1] and energyReq > dc_capacity[-1]:
+                if (rooftopArea/100 > dc_capacity[i] and rooftopArea/100 < dc_capacity[i+1]):
+                    final_units = dc_capacity[i]
+                    secure_unit.append(final_units)
+                elif rooftopArea/100 == dc_capacity[i]:
                     final_units = dc_capacity[i]
                     secure_unit.append(final_units)
         else:
