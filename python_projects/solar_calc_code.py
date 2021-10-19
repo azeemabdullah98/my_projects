@@ -419,7 +419,7 @@ def CumSavings(pv_savings):
     return cum_savings
 
 # main function...
-def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_height,battery_backup,battery_capacity,loan):
+def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopArea,struct_height,battery_backup,battery_capacity,loan):
     print("passing...")
     
     battery_capacity = float(battery_capacity)
@@ -435,7 +435,11 @@ def TotalBill(df,choice,state,discom,input_bill,SanctionLoad,rooftopArea,struct_
     if state in state_list and discom in discom_list:
         
         print("for {} type ".format(choice))
-        new_df = df[(df['Cond Type'] == choice) & (df['Main Cond ID'] == state) & (df['Sub Cond ID'] == discom)]     
+        if state == 'Gujarat' and discom == 'Gujarat Torrent Power':
+            new_df = df[(df['Cond Type'] == choice) & (df['Main Cond ID'] == state) & (df['Sub Cond ID'] == discom) & (df['Sub Cond ID2'] == district)]
+        else:
+            new_df = df[(df['Cond Type'] == choice) & (df['Main Cond ID'] == state) & (df['Sub Cond ID'] == discom)] 
+     
         fc_charge = new_df[(new_df['Line Text'] == 'defaultFixedCharge')]
         fc_charge = float(fc_charge.at[fc_charge.index[0],'Cond Value'])
         irradiance = new_df[(new_df['Line Text'] == 'Irradiance')]
@@ -741,6 +745,7 @@ def lambda_handler(event, context):
                     event["tarifftype"],
                     event["state"],
                     event["discom"],
+                    event["district"],
                     event["monthlybill"],
                     event["sanctionload"],
                     event["rooftoparea"],
