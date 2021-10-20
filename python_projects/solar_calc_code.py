@@ -489,7 +489,11 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
         smart_internal_SKU,smart_AC_cap,smart_unit,smart_cost = SmartRecommendation(df1,rooftopArea,struct_height,energy_requirement)
         pro_internal_SKU,pro_AC_cap,pro_unit,pro_cost = ProRecommendation(df1,rooftopArea,struct_height,energy_requirement)
         secure_internal_SKU,secure_AC_cap,secure_unit,secure_cost = PremiumRecommendation(df1,rooftopArea,struct_height,energy_requirement,battery_capacity)
-        num_trees_saved_per_kWp = 40
+        
+        num_trees_saved_per_kWp = float(df[(df['Line Text'] == 'TreesSaved')]['Cond Value'].values[0])
+        num_trees_saved = round((num_trees_saved_per_kWp*25)/30,2)
+        CO2 = float(df[(df['Line Text'] == 'CO2')]['Cond Value'].values[0])
+        
         if abs(rooftopArea-(smart_unit*100)) < abs(rooftopArea-(pro_unit*80)):
             
             Economy_unit = smart_unit
@@ -553,7 +557,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                      "Savings_10":cum_secure_cash_flow[10],
                                      "Savings_25":cum_secure_cash_flow[25],
                                      "PayBackPeriod":len(SecPaybackPeriod)-1,
-                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
+                                     "TreesSaved":np.ceil(num_trees_saved*secure_unit),
+                                     "CO2":CO2*secure_unit*25}
                     print(dataframe1)
                     return dataframe1
                 else:
@@ -570,7 +575,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                      "Savings_10":cum_economy_cash_flow[10],
                                      "Savings_25":cum_economy_cash_flow[25],
                                      "PayBackPeriod":len(EconPaybackPeriod)-1,
-                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
+                                     "TreesSaved":np.ceil(num_trees_saved*Economy_unit),
+                                     "CO2":CO2*Economy_unit*25}
                     print(dataframe2)
                     return dataframe2
                 
@@ -598,7 +604,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                     "Savings_10":cum_secure_cash_flow[10],
                                      "Savings_25":cum_secure_cash_flow[25],
                                      "PayBackPeriod":len(SecPaybackPeriod)-1,
-                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
+                                     "TreesSaved":np.ceil(num_trees_saved*secure_unit),
+                                     "CO2":CO2*secure_unit*25}
                     print(dataframe1)
                     return dataframe1
                 else:
@@ -611,7 +618,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                     "Savings_10":cum_economy_cash_flow[10],
                                      "Savings_25":cum_economy_cash_flow[25],
                                      "PayBackPeriod":len(EconPaybackPeriod)-1,
-                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
+                                     "TreesSaved":np.ceil(num_trees_saved*Economy_unit),
+                                     "CO2":CO2*Economy_unit*25}
                     print(dataframe2)
                     return dataframe2
                 
@@ -686,7 +694,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                 "Savings_10":Sec_cum_savings[10],
                                 "Savings_25":Sec_cum_savings[25],
                                 "PayBackPeriod":len(SecPaybackPeriod),
-                                "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
+                                "TreesSaved":np.ceil(num_trees_saved*secure_unit),
+                                "CO2":CO2*secure_unit*25}
                     print(dataframe1)
                     return dataframe1
                 else:
@@ -703,7 +712,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                      "Savings_10":Econ_cum_savings[10],
                                     "Savings_25":Econ_cum_savings[25],
                                      "PayBackPeriod":len(EconPaybackPeriod),
-                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
+                                     "TreesSaved":np.ceil(num_trees_saved*Economy_unit),
+                                     "CO2":CO2*Economy_unit*25}
                     print(dataframe2)
                     return dataframe2
             elif loan == 'no':
@@ -741,7 +751,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                    "Savings_10":Sec_cum_savings[10],
                                    "Savings_25":Sec_cum_savings[25],
                                     "PayBackPeriod":len(SecPaybackPeriod),
-                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*secure_unit*12)}
+                                     "TreesSaved":np.ceil(num_trees_saved*secure_unit),
+                                      "CO2":CO2*secure_unit*25}
                     print(dataframe1)
                     return dataframe1
                 else:
@@ -754,7 +765,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                    "Savings_10":Econ_cum_savings[10],
                                    "Savings_25":Econ_cum_savings[25],
                                     "PayBackPeriod":len(EconPaybackPeriod),
-                                     "TreesSaved":np.ceil(num_trees_saved_per_kWp*Economy_unit*12)}
+                                     "TreesSaved":np.ceil(num_trees_saved*Economy_unit),
+                                     "CO2":CO2*Economy_unit*25}
                     print(dataframe2)
                     return dataframe2
     else:
