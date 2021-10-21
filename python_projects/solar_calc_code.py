@@ -545,7 +545,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                 print(SecPaybackPeriod)
                 if battery_backup != 'no':
                     print("for Secure option...")
-                    dataframe1 = {"RecommendedDCUnit":str(secure_unit),
+                    dataframe1 = {"MonthlyUnitConsumed":str(monthly_billing),
+                                  "RecommendedDCUnit":str(secure_unit),
                                   "RecommendedACUnit":str(secure_AC_cap),
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU":secure_internal_SKU,
@@ -553,7 +554,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                    "TermLoan":str(SecureTermLoan),
                                   "TermLoanTenure":str(N),
                                   "TermLoanInterestRate":str(R),
-                                    "DebtServicing/EMI":secureEMI/12,
+                                    "mnothly_EMI":secureEMI/12,
                                      "Savings_10":cum_secure_cash_flow[10],
                                      "Savings_25":cum_secure_cash_flow[25],
                                      "PayBackPeriod":len(SecPaybackPeriod)-1,
@@ -563,7 +564,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                     return dataframe1
                 else:
                     print("for Economy Option...")
-                    dataframe2 = {"RecommendedDCUnit":str(Economy_unit),
+                    dataframe2 = {"MonthlyUnitConsumed":str(monthly_billing),
+                                  "RecommendedDCUnit":str(Economy_unit),
                                   "RecommendedACUnit":str(Economy_AC_cap),
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU": Economy_SKU,
@@ -571,7 +573,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                    "TermLoan":str(EconomyTermLoan),
                                   "TermLoanTenure":str(N),
                                   "TermLoanInterestRate":str(R),
-                                    "DebtServicing/EMI(Monthly)":economyEMI/12,
+                                    "monthly_EMI":economyEMI/12,
                                      "Savings_10":cum_economy_cash_flow[10],
                                      "Savings_25":cum_economy_cash_flow[25],
                                      "PayBackPeriod":len(EconPaybackPeriod)-1,
@@ -596,7 +598,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                 
                 if battery_backup != 'no':
                     print('for Secure option...')
-                    dataframe1 = {"RecommendedDCUnit":str(secure_unit),
+                    dataframe1 = {"MonthlyUnitConsumed":str(monthly_billing),
+                                  "RecommendedDCUnit":str(secure_unit),
                                   "RecommendedACUnit":str(secure_AC_cap),
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU":secure_internal_SKU ,
@@ -610,7 +613,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                     return dataframe1
                 else:
                     print("for Economy option...")
-                    dataframe2 = {"RecommendedDCUnit":str(Economy_unit),
+                    dataframe2 = {"MonthlyUnitConsumed":str(monthly_billing),
+                                  "RecommendedDCUnit":str(Economy_unit),
                                   "RecommendedACUnit":str(Economy_AC_cap),
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU": Economy_SKU,
@@ -682,7 +686,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                 
                 if battery_backup != 'no':
                     print("for Secure option...")
-                    dataframe1= {"RecommendedDCUnit":str(secure_unit),
+                    dataframe1= {"MonthlyUnitConsumed":str(monthly_billing),
+                              "RecommendedDCUnit":str(secure_unit),
                               "RecommendedACUnit":str(secure_AC_cap),
                               "EnergyRequirement":str(energy_requirement),
                               "RecommendedSKU": secure_internal_SKU,
@@ -690,7 +695,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                "TermLoan":str(SecureTermLoan),
                                "TermLoanTenure":str(Tenure),
                                 "TermLoanInterestRate":str(ROI),
-                                "DebtServicing/EMI(Monthly)":secureEMI/12,
+                                "monthly_EMI":secureEMI/12,
                                 "Savings_10":Sec_cum_savings[10],
                                 "Savings_25":Sec_cum_savings[25],
                                 "PayBackPeriod":len(SecPaybackPeriod),
@@ -700,7 +705,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                     return dataframe1
                 else:
                     print("for Economy option...")
-                    dataframe2 = {"RecommendedDCUnit":str(Economy_unit),
+                    dataframe2 = {"MonthlyUnitConsumed":str(monthly_billing),
+                                  "RecommendedDCUnit":str(Economy_unit),
                                   "RecommendedACUnit":str(Economy_AC_cap),
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU": Economy_SKU,
@@ -708,7 +714,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                    "TermLoan":str(EconomyTermLoan),
                                    "TermLoanTenure":str(Tenure),
                                     "TermLoanInterestRate":str(ROI),
-                                    "DebtServicing/EMI(Monthly)":economyEMI/12,
+                                    "monthly_EMI":economyEMI/12,
                                      "Savings_10":Econ_cum_savings[10],
                                     "Savings_25":Econ_cum_savings[25],
                                      "PayBackPeriod":len(EconPaybackPeriod),
@@ -743,7 +749,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                 
                 if battery_backup != 'no':
                     print("for Secure option...")
-                    dataframe1 =  {"RecommendedDCUnit":str(secure_unit),
+                    dataframe1 =  {"MonthlyUnitConsumed":str(monthly_billing),
+                                  "RecommendedDCUnit":str(secure_unit),
                                   "RecommendedACUnit":str(secure_AC_cap),
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU":secure_internal_SKU ,
@@ -757,7 +764,8 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                     return dataframe1
                 else:
                     print("for Economy option...")
-                    dataframe2 = {"RecommendedDCUnit":str(Economy_unit),
+                    dataframe2 = {"MonthlyUnitConsumed":str(monthly_billing),
+                                  "RecommendedDCUnit":str(Economy_unit),
                                   "RecommendedACUnit":str(Economy_AC_cap),
                                   "EnergyRequirement":str(energy_requirement),
                                   "RecommendedSKU": Economy_SKU,
