@@ -5,7 +5,7 @@ import json
 import boto3
 from io import StringIO
 
-client = boto3.client('s3',region_name = "us-east-2")
+client = boto3.client('s3',region_name="us-east-2")
 
 bucket_name = 'solar-calc-demo'
 
@@ -386,7 +386,7 @@ def TotalExpense(bill_yearly,maintenanceCost,debtInterest,TaxBenefit,incomeTaxOn
         totalExpense = [i for i in bill_yearly]
         taxBenefitOnExpense = [i*(TaxBenefit/100) for i in totalExpense]
         totalIncomeTax = [i for i in taxBenefitOnExpense]
-        net_flow = [i-j for i,j in zip(bill_yearly,totalIncomeTax)]
+        net_flow = [i-j for i,j in zip(totalExpense,totalIncomeTax)]
     
     return totalExpense,taxBenefitOnExpense,totalIncomeTax,net_flow
 
@@ -651,6 +651,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
             SecureMaintenanceCost = MaintenanceIncrementCost(choice,Secure_maintenance_cost,repair_maintenance_rate)
 
             NetFlow = NormalBill(input_bill,inflationTariff,TaxBenefit,cuf_factor)
+#             print("flow",NetFlow)
             disc_factor = [round((1-(cuf_factor/100))**years,2) for years in range(len(NetFlow))]
             
             if loan == 'yes':
@@ -679,10 +680,12 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                 Econ_cum_savings=CumSavings(Econ_pv_savings)
                 Sec_cum_savings=CumSavings(Sec_pv_savings)
                 
-                EconPaybackPeriod = [i for i in Econ_cum_savings if i<=0]
-                print(EconPaybackPeriod)
-                SecPaybackPeriod = [i for i in Sec_cum_savings if i<=0]
-                print(SecPaybackPeriod)
+#                 EconPaybackPeriod = [i for i in Econ_cum_savings if i<=0]
+#                 print(EconPaybackPeriod)
+#                 SecPaybackPeriod = [i for i in Sec_cum_savings if i<=0]
+#                 print(SecPaybackPeriod)
+                EconPaybackPeriod = 1+abs(-Econ_cum_savings[1]/Econ_cum_savings[0])
+                SecPaybackPeriod = 1+abs(-Sec_cum_savings[1]/Sec_cum_savings[0])
                 
                 if battery_backup != 'no':
                     print("for Secure option...")
@@ -698,7 +701,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                 "monthly_EMI":secureEMI/12,
                                 "Savings_10":Sec_cum_savings[10],
                                 "Savings_25":Sec_cum_savings[25],
-                                "PayBackPeriod":len(SecPaybackPeriod),
+                                "PayBackPeriod":SecPaybackPeriod,
                                 "TreesSaved":np.ceil(num_trees_saved*secure_unit),
                                 "CO2":CO2*secure_unit*25}
                     print(dataframe1)
@@ -717,7 +720,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                     "monthly_EMI":economyEMI/12,
                                      "Savings_10":Econ_cum_savings[10],
                                     "Savings_25":Econ_cum_savings[25],
-                                     "PayBackPeriod":len(EconPaybackPeriod),
+                                     "PayBackPeriod":EconPaybackPeriod,
                                      "TreesSaved":np.ceil(num_trees_saved*Economy_unit),
                                      "CO2":CO2*Economy_unit*25}
                     print(dataframe2)
@@ -735,6 +738,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                 
                 EconSavings = [-solarExpense+Expense for solarExpense,Expense in zip(EconNetFlow,NetFlow)]
                 SecSavings = [-solarExpense+Expense for solarExpense,Expense in zip(SecNetFlow,NetFlow)]
+
                 
                 Econ_pv_savings = [i*j for i,j in zip(EconSavings,disc_factor)] 
                 Sec_pv_savings = [i*j for i,j in zip(SecSavings,disc_factor)]
@@ -742,10 +746,12 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                 Econ_cum_savings=CumSavings(Econ_pv_savings)
                 Sec_cum_savings=CumSavings(Sec_pv_savings)
                 
-                EconPaybackPeriod = [i for i in Econ_cum_savings if i<=0]
-                print(EconPaybackPeriod)
-                SecPaybackPeriod = [i for i in Sec_cum_savings if i<=0]
-                print(SecPaybackPeriod)
+#                 EconPaybackPeriod = [i for i in Econ_cum_savings if i<=0]
+#                 print(EconPaybackPeriod)
+#                 SecPaybackPeriod = [i for i in Sec_cum_savings if i<=0]
+#                 print(SecPaybackPeriod)
+                EconPaybackPeriod = 1+abs(-Econ_cum_savings[1]/Econ_cum_savings[0])
+                SecPaybackPeriod = 1+abs(-Sec_cum_savings[1]/Sec_cum_savings[0])
                 
                 if battery_backup != 'no':
                     print("for Secure option...")
@@ -757,7 +763,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                    "CapitalCost":str(secure_cost),
                                    "Savings_10":Sec_cum_savings[10],
                                    "Savings_25":Sec_cum_savings[25],
-                                    "PayBackPeriod":len(SecPaybackPeriod),
+                                    "PayBackPeriod":SecPaybackPeriod,
                                      "TreesSaved":np.ceil(num_trees_saved*secure_unit),
                                       "CO2":CO2*secure_unit*25}
                     print(dataframe1)
@@ -772,7 +778,7 @@ def TotalBill(df,choice,state,discom,district,input_bill,SanctionLoad,rooftopAre
                                    "CapitalCost":str(Economy_cost),
                                    "Savings_10":Econ_cum_savings[10],
                                    "Savings_25":Econ_cum_savings[25],
-                                    "PayBackPeriod":len(EconPaybackPeriod),
+                                    "PayBackPeriod":EconPaybackPeriod,
                                      "TreesSaved":np.ceil(num_trees_saved*Economy_unit),
                                      "CO2":CO2*Economy_unit*25}
                     print(dataframe2)
