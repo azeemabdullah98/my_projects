@@ -4,22 +4,30 @@
 def scoopCheck(scoopLimit):
     flag = True
     while flag == True:
-        scoopNumber = int(input("Enter the number of scoop to add:\n"))
-        if scoopNumber <= scoopLimit:
-            flag = False
-        else:
-            print("Maximum soop Limit is {}".format(scoopLimit))
+        try:
+            scoopNumber = int(input("Enter the number of scoop to add:\n"))
+            if scoopNumber <= scoopLimit:
+                flag = False
+            else:
+                print("Maximum soop Limit is {}".format(scoopLimit))
+        except Exception as e:
+            print(e)
+            continue
     return scoopNumber
 
 # Function to check whether the topping is within the topping Limit...
 def toppingCheck(toppingLimit):
     flag = True
     while flag == True:
-        toppingNumber = int(input("Enter the number of toppings to add:\n"))
-        if toppingNumber <= toppingLimit:
-            flag = False
-        else:
-            print("Maximum topping limit is {}".format(toppingLimit))
+        try:
+            toppingNumber = int(input("Enter the number of toppings to add:\n"))
+            if toppingNumber <= toppingLimit:
+                flag = False
+            else:
+                print("Maximum topping limit is {}".format(toppingLimit))
+        except Exception as e:
+            print(e)
+            continue
     return toppingNumber
 
 # Function to get the user input and store it in the dictionary, returns dictionary...
