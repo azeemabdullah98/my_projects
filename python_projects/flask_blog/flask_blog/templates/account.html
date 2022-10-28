@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    <div class="media">
+      <img class="rounded-circle account-img" src="{{image_file}}">
+      <div class="media-body">
+        <h2 class="account-heading">{{current_user.username}}</h2>
+        <p class="text-secondary">{{current_user.email}}</p>
+      </div>
+</div>
+</div>
+
+    <form method="post" action="" enctype="multipart/form-data">
+        {{form.hidden_tag()}}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">
+                Account Info
+            </legend>
+            <div class="form-group">
+                {{form.username.label(class="form-control-label")}}
+                {% if form.username.errors %}
+                {{form.username(class="form-control form-control-lg is-invalid")}}
+                <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                    <span>{{error}}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{form.username(class="form-control form-control-lg")}}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{form.email.label(class="form-control-label")}}
+                {% if form.email.errors %}
+                {{form.email(class="form-control form-control-lg is-invalid")}}
+                <div class="invalid-feedback">
+                    {% for error in form.email.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{form.email(class="form-control form-control-lg")}}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{form.picture.label()}}
+                {{form.picture(class="form-control-file")}}
+                {% if form.picture.errors %}
+                    {% for error in form.picture.errors %}
+                        <span class="text-danger">{{ error }}</span></br>
+                    {% endfor %}
+                {% endif %}
+        </fieldset>
+        <div class="form-group">
+            {{form.submit(class="btn btn-outline-info")}}
+        </div>
+    </form>
+    <button type="button" class="btn btn-danger btn" data-toggle="modal" data-target="#DeleteModal">Delete Account</button>
+    <div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="DeleteModalLabel">Are you sure to Delete Account? The blogs that you have created will also be deleted</h5>
+            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <form action="{{url_for('delete_account',user_id=user.id)}}" method="post">
+                <input type="submit" class="btn btn-danger" value="Delete" />
+            </form>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+{% endblock content %}
